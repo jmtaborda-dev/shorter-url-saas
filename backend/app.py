@@ -2,25 +2,26 @@ import os
 from flask import Flask, request, jsonify, redirect
 import string
 import random
-import sqlite3
 from flask_cors import CORS
+from sqlalchemy import create_engine, text
+from sqlalchemy.orm import sessionmaker
 
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "*"}})
 
 DATABASE_URL = os.environ.get('DATABASE_URL')
 
+engine = create_engine(DATABASE_URL)
+Session = sessionmaker(bind=engine)
+
+
 def get_db_connection():
-    conn = sqlite3.connect(DATABASE_URL)
-    conn.row_factory = sqlite3.Row
-    return conn
+    session = Session()
+    return session
 
 def init_db():
-    conn = get_db_connection()
-    with open('schema.sql', 'r') as f:
-        conn.executescript(f.read())
-    conn.commit()
-    conn.close()
+    pass
+
 
 def generate_short_code():
     chars = string.ascii_letters + string.digits
@@ -42,40 +43,42 @@ def shorten_url():
     if not long_url:
         return jsonify({'error': 'Long URL is required'}), 400
 
-    conn = get_db_connection()
+    session = get_db_connection()
     if custom_url:
         short_code = custom_url
-        cursor = conn.execute("SELECT * FROM links WHERE short_code = ?", (short_code,))
-        if cursor.fetchone():
+        result = session.execute(text("SELECT * FROM links WHERE short_code = :short_code"), {"short_code":short_code}).fetchone()
+        if result:
+            session.close()
             return jsonify({'error': 'Short code already exists'}), 400
     else:
         short_code = generate_short_code()
         while True:
-            cursor = conn.execute("SELECT * FROM links WHERE short_code = ?", (short_code,))
-            if not cursor.fetchone():
+            result = session.execute(text("SELECT * FROM links WHERE short_code = :short_code"), {"short_code":short_code}).fetchone()
+            if not result:
                 break
             short_code = generate_short_code()
 
-    conn.execute("INSERT INTO links (short_code, long_url) VALUES (?, ?)", (short_code, long_url))
-    conn.commit()
-    conn.close()
+    session.execute(text("INSERT INTO links (short_code, long_url) VALUES (:short_code, :long_url)"), {"short_code": short_code, "long_url":long_url})
+    session.commit()
+    session.close()
 
     short_url = f"{request.host_url}{short_code}"
     return jsonify({'shortUrl': short_url})
 
+
 @app.route('/<short_code>')
 def redirect_url(short_code):
-    conn = get_db_connection()
-    cursor = conn.execute("SELECT long_url FROM links WHERE short_code = ?", (short_code,))
-    result = cursor.fetchone()
-    conn.close()
+    session = get_db_connection()
+    result = session.execute(text("SELECT long_url FROM links WHERE short_code = :short_code"), {"short_code":short_code}).fetchone()
+    session.close()
 
     if result:
-        long_url = result['long_url']
+        long_url = result[0]
         return redirect(long_url)
     else:
         return "Short URL not found", 404
 
+
 if __name__ == '__main__':
     init_db()
-    app.run(debug=True, port=5000)
+app.run(debug=True, port=5000)
