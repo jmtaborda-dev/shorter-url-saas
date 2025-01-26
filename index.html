@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Link Shortener</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Link Shortener</h1>
+        <div class="input-group">
+            <label for="long-url">Enter Long URL:</label>
+            <input type="url" id="long-url" placeholder="https://example.com">
+        </div>
+        <div class="input-group">
+            <label for="custom-url">Custom URL (optional):</label>
+            <input type="text" id="custom-url" placeholder="my-short-link">
+        </div>
+         <button id="shorten-btn">Shorten</button>
+        <div id="result" class="result">
+            <label for="short-url">Short URL:</label>
+             <input type="text" id="short-url" readonly/>
+             <button id="copy-button">Copy</button>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
