@@ -38,7 +38,7 @@ document.addEventListener('DOMContentLoaded', () => {
         document.execCommand('copy');
     });
 
-     async function shortenUrl(longUrl, customUrl) {
+    async function shortenUrl(longUrl, customUrl) {
         try {
             const response = await fetch(`${API_URL}/api/shorten`, {
                 method: 'POST',
@@ -47,15 +47,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 },
                 body: JSON.stringify({ longUrl, customUrl }),
             });
-              if(!response.ok){
-                  throw new Error(`HTTP error! Status: ${response.status}`)
-                }
+            if(!response.ok){
+              throw new Error(`HTTP error! Status: ${response.status}`)
+            }
             const data = await response.json();
-            console.log(data);
             return data.shortUrl
          } catch (error) {
-             console.error("Error:", error);
+           console.error("Error:", error);
             return null
         }
-    }
+      }
 });
