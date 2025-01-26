@@ -7,7 +7,7 @@ RUN pip install -r requirements.txt
 
 COPY backend/app.py ./
 COPY backend/schema.sql ./
-COPY backend/links.db ./
+
 
 ENV PORT 8000
 
