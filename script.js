@@ -40,7 +40,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
      async function shortenUrl(longUrl, customUrl) {
         try {
-            const response = await fetch('${API_URL}/api/shorten', {
+            const response = await fetch(`${API_URL}/api/shorten`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
