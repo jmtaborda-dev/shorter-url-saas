@@ -1,3 +1,6 @@
+const API_URL = "http://shorter-url-saas-production.up.railway.app";
+
+
 document.addEventListener('DOMContentLoaded', () => {
     const longUrlInput = document.getElementById('long-url');
     const customUrlInput = document.getElementById('custom-url');
@@ -37,7 +40,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
      async function shortenUrl(longUrl, customUrl) {
         try {
-            const response = await fetch('shorter-url-saas-production.up.railway.app/api/shorten', {
+            const response = await fetch('${API_URL}/api/shorten', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
