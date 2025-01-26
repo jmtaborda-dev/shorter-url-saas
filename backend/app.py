@@ -1,3 +1,4 @@
+import os
 from flask import Flask, request, jsonify, redirect
 import string
 import random
@@ -5,12 +6,12 @@ import sqlite3
 from flask_cors import CORS
 
 app = Flask(__name__)
-CORS(app, resources={r"/*": {"origins": ["http://127.0.0.1:5500"]}}) # Aquí permites los orígenes desde donde se pueden hacer peticiones.
+CORS(app, resources={r"/*": {"origins": "*"}})
 
-DATABASE = 'links.db'  # Nombre de la base de datos SQLite
+DATABASE_URL = os.environ.get('DATABASE_URL')
 
 def get_db_connection():
-    conn = sqlite3.connect(DATABASE)
+    conn = sqlite3.connect(DATABASE_URL)
     conn.row_factory = sqlite3.Row
     return conn
 
@@ -43,16 +44,16 @@ def shorten_url():
 
     conn = get_db_connection()
     if custom_url:
-         short_code = custom_url
-         cursor = conn.execute("SELECT * FROM links WHERE short_code = ?", (short_code,))
-         if cursor.fetchone():
+        short_code = custom_url
+        cursor = conn.execute("SELECT * FROM links WHERE short_code = ?", (short_code,))
+        if cursor.fetchone():
             return jsonify({'error': 'Short code already exists'}), 400
     else:
-       short_code = generate_short_code()
-       while True:
+        short_code = generate_short_code()
+        while True:
             cursor = conn.execute("SELECT * FROM links WHERE short_code = ?", (short_code,))
             if not cursor.fetchone():
-              break
+                break
             short_code = generate_short_code()
 
     conn.execute("INSERT INTO links (short_code, long_url) VALUES (?, ?)", (short_code, long_url))
