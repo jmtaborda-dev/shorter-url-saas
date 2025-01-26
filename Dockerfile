@@ -9,4 +9,4 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY backend/app.py ./
 COPY backend/schema.sql ./
 
-CMD ["python", "-m", "gunicorn", "--bind", "0.0.0.0:8080", "app:app"]
+CMD ["python", "-m", "gunicorn", "--bind", "0.0.0.0:30000", "app:app"]
