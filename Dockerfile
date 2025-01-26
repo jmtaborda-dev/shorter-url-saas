@@ -5,9 +5,10 @@ WORKDIR /app
 COPY backend/requirements.txt requirements.txt
 RUN pip install -r requirements.txt
 
+ENV PATH=$PATH:/app/.local/bin
+
 COPY backend/app.py ./
 COPY backend/schema.sql ./
-
 
 ENV PORT 8000
 
