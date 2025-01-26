@@ -1,6 +1,3 @@
-const API_URL = "http://shorter-url-saas-production.up.railway.app";
-
-
 document.addEventListener('DOMContentLoaded', () => {
     const longUrlInput = document.getElementById('long-url');
     const customUrlInput = document.getElementById('custom-url');
@@ -38,23 +35,25 @@ document.addEventListener('DOMContentLoaded', () => {
         document.execCommand('copy');
     });
 
+    const API_URL = "http://shorter-url-saas-production.up.railway.app";
+
     async function shortenUrl(longUrl, customUrl) {
-        try {
-            const response = await fetch(`${API_URL}/api/shorten`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ longUrl, customUrl }),
-            });
-            if(!response.ok){
-              throw new Error(`HTTP error! Status: ${response.status}`)
-            }
-            const data = await response.json();
-            return data.shortUrl
-         } catch (error) {
+      try {
+          const response = await fetch("http://shorter-url-saas-production.up.railway.app/api/shorten", {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({ longUrl, customUrl }),
+          });
+          if(!response.ok){
+            throw new Error(`HTTP error! Status: ${response.status}`)
+          }
+          const data = await response.json();
+          return data.shortUrl
+       } catch (error) {
            console.error("Error:", error);
-            return null
-        }
-      }
+           return null
+       }
+     }
 });
